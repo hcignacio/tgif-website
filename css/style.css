@@ -1,0 +1,9 @@
+.options {
+  display: flex;
+}
+
+.table-full-name {}
+
+.table-index {
+  padding-right: 0rem !important;
+}
