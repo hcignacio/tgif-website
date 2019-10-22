@@ -1,4 +1,4 @@
-createTableSenate(data.results[0].members)
+createTableHouse(data.results[0].members)
 
 statesOptions = defineDropdownStatesOptions(data.results[0].members)
 createDropdownStates(statesOptions)
@@ -6,7 +6,7 @@ createDropdownStates(statesOptions)
 function createDropdownStates(statesOptions) {
   statesOptions.forEach(function (state) {
     $("#dd-states").append(
-      '<a class="dropdown-item" href="senate-data.html' + state + '">' + state + '</a>'
+      '<a class="dropdown-item" href="#">' + state + '</a>'
     )
   })
 }
@@ -18,18 +18,25 @@ function defineDropdownStatesOptions(members) {
   }
 
   states.sort();
+  //console.log(states);
 
+  
   var statesOptions = [];
-
+  
   for (var i = 0; i < states.length; i++) {
     if (states[i] != states[i + 1]) {
+      //console.log(states[i]);
       statesOptions.push(states[i]);
     }
+    else{
+      //console.log(states[i]);
+    }
   }
+  //console.log(statesOptions);
   return statesOptions;
 }
 
-function createTableSenate(members) {
+function createTableHouse(members) {
   members.forEach(function (member) {
     $("#t-data").append('<tr>'
       + '<td class="table-index">' + (members.indexOf(member) + 1) + '</td>'
@@ -57,26 +64,4 @@ function hasMiddleName(member) {
     middleName = '';
   }
   return middleName
-}
-
-
-function getCB() {
-  checkedBoxes = [];
-  if (document.getElementById("cb-d").checked) {
-    //console.log('D')
-    checkedBoxes.push('D')
-  }
-  if (document.getElementById("cb-r").checked) {
-    //console.log('R')
-    checkedBoxes.push('R')
-  }
-  if (document.getElementById("cb-i").checked) {
-    //console.log('I')
-    checkedBoxes.push('I')
-  }
-  console.log(checkedBoxes)
-
-  if (checkedBoxes.includes('D')) {
-    console.log('D')
-  }
 }

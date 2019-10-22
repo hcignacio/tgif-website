@@ -1,9 +1,43 @@
+body {
+  width: 100%;
+  font-family: 'Cabin', sans-serif;
+}
+
+.footer {
+  height: 3rem;
+}
+
 .options {
   display: flex;
 }
 
-.table-full-name {}
-
 .table-index {
   padding-right: 0rem !important;
+  width: 1rem;
+}
+
+.table-full-name {
+  width: 12rem;
+}
+
+.table-party {
+  width: 9rem;
+}
+
+.table-state {
+  width: 1rem;
+}
+
+.table-seniority {
+  width: 8rem;
+}
+
+.table-votes {
+  width: 6rem;
+}
+
+.home-img {
+  width: inherit;
+  position: relative;
+  top: 5rem;
 }
