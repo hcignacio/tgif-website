@@ -14,11 +14,9 @@
     <link href="https://fonts.googleapis.com/css?family=Cabin&display=swap" rel="stylesheet">
   </head>
 
-<body>
-  </head>
+<body onload="getCB()">
 
-  <body>
-
+  <div id="main">
     <div class="container-fluid">
       <div class="row mt-2">
         <div class="px-4 col-md-12" style="display: flex">
@@ -96,11 +94,11 @@
                     filter by party:
                   </h6>
                   <span class="mr-3">
-                    <input type="checkbox" id="cb-d"  onclick="getCB()">Democrat</span>
+                    <input type="checkbox" id="cb-d" onclick="getCB()" checked>Democrat</span>
                   <span class="mr-3">
-                    <input type="checkbox" id="cb-r" onclick="getCB()">Republican</span>
+                    <input type="checkbox" id="cb-r" onclick="getCB()" checked>Republican</span>
                   <span class="mr-3">
-                    <input type="checkbox" id="cb-i" onclick="getCB()">Independent</span>
+                    <input type="checkbox" id="cb-i" onclick="getCB()" checked>Independent</span>
                 </div>
               </div>
             </div>
@@ -117,7 +115,7 @@
                   Select a state
                 </button>
                 <div class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton" id="dd-states">
-                  <a class="dropdown-item" href="#">ALL</a>
+                  <a class="dropdown-item" id="ALL" onclick="getDD(this.id)">ALL</a>
                   <div class="dropdown-divider"></div>
                 </div>
               </div>
@@ -140,9 +138,9 @@
           <table class="table my-2">
             <thead>
               <tr>
-                <th>
-                </th>
                 <th class="table-index">
+                </th>
+                <th class="table-full-name">
                   Senator
                 </th>
                 <th class="table-party">
@@ -170,20 +168,19 @@
         -->
 
       </div>
-
-
     </div>
 
-    <div class="footer bg-dark text-light">
+    <div class="footer bg-dark text-light mt-5">
       <p class="ml-3 mb-0 text-center pb-3 pt-2">
         2019 TGIF | All Right Reserved
       </p>
     </div>
-  </body>
-  <script src="vendor/jquery/jquery-3.4.1.min.js"></script>
-  <script src="vendor/popper/popper.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-  <script src="js/pro-congress-113-senate.js"></script>
-  <script src="js/load-senate-data.js"></script>
+  </div>
+</body>
+<script src="vendor/jquery/jquery-3.4.1.min.js"></script>
+<script src="vendor/popper/popper.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="js/pro-congress-113-senate.js"></script>
+<script src="js/load-senate-data.js"></script>
 
 </html>

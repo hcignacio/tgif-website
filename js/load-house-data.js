@@ -1,12 +1,10 @@
-createTableHouse(data.results[0].members)
-
 statesOptions = defineDropdownStatesOptions(data.results[0].members)
 createDropdownStates(statesOptions)
 
 function createDropdownStates(statesOptions) {
   statesOptions.forEach(function (state) {
     $("#dd-states").append(
-      '<a class="dropdown-item" href="#">' + state + '</a>'
+      '<a class="dropdown-item" id="' + state + '" onclick="getDD(this.id)">' + state + '</a>'
     )
   })
 }
@@ -18,25 +16,19 @@ function defineDropdownStatesOptions(members) {
   }
 
   states.sort();
-  //console.log(states);
-
   
   var statesOptions = [];
   
   for (var i = 0; i < states.length; i++) {
     if (states[i] != states[i + 1]) {
-      //console.log(states[i]);
       statesOptions.push(states[i]);
     }
-    else{
-      //console.log(states[i]);
-    }
   }
-  //console.log(statesOptions);
   return statesOptions;
 }
 
 function createTableHouse(members) {
+  $("#t-data").empty();
   members.forEach(function (member) {
     $("#t-data").append('<tr>'
       + '<td class="table-index">' + (members.indexOf(member) + 1) + '</td>'
@@ -64,4 +56,48 @@ function hasMiddleName(member) {
     middleName = '';
   }
   return middleName
+}
+
+
+function getCB() {
+  checkedBoxes = [];
+  if (document.getElementById("cb-d").checked) {
+    checkedBoxes.push('D')
+  }
+  if (document.getElementById("cb-r").checked) {
+    checkedBoxes.push('R')
+  }
+  if (document.getElementById("cb-i").checked) {
+    checkedBoxes.push('I')
+  }
+
+  var dataToFilter = data.results[0].members;
+
+  var finalData = dataToFilter.filter(member => checkedBoxes.includes(member.party))
+
+  if (!(checkedBoxes.includes('D')) && !(checkedBoxes.includes('R')) && !(checkedBoxes.includes('I'))) {
+    finalData = [];
+  }
+
+  createTableHouse(finalData);
+
+  if (finalData.length == 0) {
+    $(".table").hide();
+  }
+  else {
+    $(".table").fadeIn();
+  }
+
+  return finalData;
+}
+
+function getDD(id) {
+  var dataToFilter = getCB();
+  if (id == "ALL") {
+    var finalData = dataToFilter
+  }
+  else {
+    var finalData = dataToFilter.filter(member => member.state == id)
+  }
+  createTableHouse(finalData);
 }

@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css?family=Cabin&display=swap" rel="stylesheet">
   </head>
 
-<body>
+<body onload="getCB()">
   </head>
 
   <body>
@@ -68,15 +68,19 @@
                     Congressmen
                   </h2>
                   <p class="text-justify">
-                      The major power of the House is to pass federal legislation that affects the entire country, 
-                      although its bills must also be passed by the Senate and further agreed to by the U.S. President 
-                      before becoming law (unless both the House and Senate re-pass the legislation with a two-thirds majority 
-                      in each chamber). The House has some exclusive powers: the power to initiate revenue bills, to impeach officials 
-                      (impeached officials are subsequently tried in the Senate), and to elect the U.S. President in case there is no
-                       majority in the Electoral College.
+                    The major power of the House is to pass federal legislation that affects the entire country,
+                    although its bills must also be passed by the Senate and further agreed to by the U.S. President
+                    before becoming law (unless both the House and Senate re-pass the legislation with a two-thirds
+                    majority
+                    in each chamber). The House has some exclusive powers: the power to initiate revenue bills, to
+                    impeach officials
+                    (impeached officials are subsequently tried in the Senate), and to elect the U.S. President in case
+                    there is no
+                    majority in the Electoral College.
 
-                      Each U.S. state is represented in the House in proportion to its population as measured in the census, 
-                      but every state is entitled to at least one representative.
+                    Each U.S. state is represented in the House in proportion to its population as measured in the
+                    census,
+                    but every state is entitled to at least one representative.
                   </p>
                 </div>
               </div>
@@ -97,11 +101,11 @@
                     filter by party:
                   </h6>
                   <span class="mr-3">
-                    <input type="checkbox">Democrat</span>
+                    <input type="checkbox" id="cb-d" onclick="getCB()" checked>Democrat</span>
                   <span class="mr-3">
-                    <input type="checkbox">Republican</span>
+                    <input type="checkbox" id="cb-r" onclick="getCB()" checked>Republican</span>
                   <span class="mr-3">
-                    <input type="checkbox">Independent</span>
+                    <input type="checkbox" id="cb-i" onclick="getCB()" checked>Independent</span>
                 </div>
               </div>
             </div>
@@ -118,7 +122,7 @@
                   Select a state
                 </button>
                 <div class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton" id="dd-states">
-                  <a class="dropdown-item" href="#">ALL</a>
+                  <a class="dropdown-item" id="ALL" onclick="getDD(this.id)">ALL</a>
                   <div class="dropdown-divider"></div>
                 </div>
               </div>
