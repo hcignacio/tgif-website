@@ -12,7 +12,7 @@ function votesWithParty(members) {
   return average;
 }
 
-function loyaltyTableInfo() {
+function loyaltyTableNumbers() {
   $("#democratsNumber").append(
     statistics.democratsNumber
   );
@@ -31,6 +31,21 @@ function loyaltyTableInfo() {
   $("#independentsVotesParty").append(
     statistics.independentsVotesParty.toPrecision(4)
   );
+}
+
+function loyaltyTableLL(members) {
+  members.forEach(function (member) {
+    $("#t-data").append('<tr>'
+      + '<td>' + '<a href=" '
+      + member.url + '">'
+      + (member.last_name)
+      + ', ' + (member.first_name)
+      + ' '
+      + hasMiddleName(member)
+      + '<td>' + (member.total_votes) + '</td>'
+      + '<td>' + (member.votes_with_party_pct) + ' %' + '</td>'
+      + '</tr>')
+  })
 }
 
 function findMinPercentage(members) {
@@ -63,8 +78,6 @@ function findLeastLoyal(members) {
 
   var lowestPercentage = findMinPercentage(sortedMembers);
 
-  console.log("theLowest: ", lowestPercentage)
-
   sortedMembers.forEach(member => {
     while (percentage < 0.1) {
       if (member.votes_with_party_pct <= lowestPercentage) {
@@ -78,23 +91,19 @@ function findLeastLoyal(members) {
         percentage = lowerLength / totalLength;
 
         lowestPercentage = findMinPercentage(filteredMembers);
-        /* 
-              console.log("votes_with_party_pct: ", member.votes_with_party_pct)
-              console.log("lowerLength: ", lowerLength)
-              console.log("percentage: ", percentage)
-              console.log("filteredMembers: ", filteredMembers)
-              console.log("name: ", member.first_name)
-              console.log("lowestPercentage: ", lowestPercentage) */
 
-        leastLoyalsArray.push(member);
-
-        /* console.log("leastLoyalsArray: ", leastLoyalsArray) */
-        
-        return leastLoyalsArray;
+        console.log("lowerLength: ", lowerLength)
+        console.log("percentage: ", percentage)
+        console.log("filteredMembers: ", filteredMembers)
+        console.log("lowestPercentage: ", lowestPercentage)
       }
     }
   });
 
+  
+  leastLoyalsArray = sortedMembers.slice(0,lowerLength);
+
+  return leastLoyalsArray;
 }
 
 // Statistics
@@ -125,5 +134,8 @@ console.log("independentsVotesParty: ", statistics.independentsVotesParty); */
 
 //
 
-loyaltyTableInfo()
-findLeastLoyal(democratsArray)
+loyaltyTableNumbers();
+//findLeastLoyal(data.results[0].members);
+var leastLoyal = findLeastLoyal(data.results[0].members);
+console.log(leastLoyal); 
+loyaltyTableLL(leastLoyal);

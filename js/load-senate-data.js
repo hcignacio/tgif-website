@@ -43,7 +43,7 @@ function createTableSenate(members) {
       + '<td>' + (member.state) + '</td>'
       + '<td>' + (member.seniority) + ' years' + '</td>'
       + '<td>' + (member.votes_with_party_pct) + ' %' + '</td>'
-      + '</th>')
+      + '</tr>')
   })
 }
 
