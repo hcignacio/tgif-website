@@ -22,6 +22,9 @@ function loyaltyTableNumbers() {
   $("#independentsNumber").append(
     statistics.independentsNumber
   );
+  $("#totalNumber").append(
+    statistics.totalNumber
+  );
   $("#democratsVotesParty").append(
     statistics.democratsVotesParty.toPrecision(4)
   );
@@ -30,6 +33,9 @@ function loyaltyTableNumbers() {
   );
   $("#independentsVotesParty").append(
     statistics.independentsVotesParty.toPrecision(4)
+  );
+  $("#totalVotesParty").append(
+    statistics.totalVotesParty.toPrecision(4)
   );
 }
 
@@ -275,6 +281,7 @@ var statistics = {
   "democratsVotesParty": votesWithParty(democratsArray),
   "republicansVotesParty": votesWithParty(republicansArray),
   "independentsVotesParty": votesWithParty(independentsArray),
+  "totalVotesParty": votesWithParty(data.results[0].members),
 }
 
 // Tests
