@@ -31,8 +31,8 @@ function createTableSenate(members) {
   $("#t-data").empty();
   members.forEach(function (member) {
     $("#t-data").append('<tr>'
-      + '<td class="table-index">' + (members.indexOf(member) + 1) + '</td>'
-      + '<td class="table-full-name">' + '<a href=" '
+      + '<td>' + (members.indexOf(member) + 1) + '</td>'
+      + '<td>' + '<a href=" '
       + member.url + '">'
       + (member.last_name)
       + ', ' + (member.first_name)
