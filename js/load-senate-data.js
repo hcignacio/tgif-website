@@ -4,7 +4,7 @@ createDropdownStates(statesOptions)
 function createDropdownStates(statesOptions) {
   statesOptions.forEach(function (state) {
     $("#dd-states").append(
-      '<a class="dropdown-item" id="' + state + '" onclick="getDD(this.id)">' + state + '</a>'
+      '<option value="' + state + '" >' + state + '</option>'
     )
   })
 }
@@ -79,6 +79,9 @@ function getCB() {
     finalData = [];
   }
 
+  let stateSelected = document.getElementById("dd-states").value;
+  finalData = getDD(finalData, stateSelected);
+
   createTableSenate(finalData);
 
   if (finalData.length == 0) {
@@ -91,7 +94,7 @@ function getCB() {
   return finalData;
 }
 
-function getDD(id) {
+/* function getDD(id) {
   var dataToFilter = getCB();
   if (id == "ALL") {
     var finalData = dataToFilter
@@ -100,4 +103,20 @@ function getDD(id) {
     var finalData = dataToFilter.filter(member => member.state == id)
   }
   createTableSenate(finalData);
+} */
+
+document.getElementById("dd-states").addEventListener("change", () => {
+  let stateSelected = document.getElementById("dd-states").value;
+  var dataToFilter = getCB();
+  getDD(dataToFilter, stateSelected)
+});
+
+function getDD(members, state) {
+  if ((state) == "ALL") {
+    var finalData = members
+  }
+  else {
+    var finalData = members.filter(member => member.state == state)
+  }
+  return finalData;
 }

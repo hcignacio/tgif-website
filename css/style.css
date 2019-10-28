@@ -8,6 +8,10 @@ body {
   font-family: 'Cabin', sans-serif;
 }
 
+.logo {
+  height: 2rem;
+}
+
 .footer {
   height    : 3rem;
   margin-top: 11rem;

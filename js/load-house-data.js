@@ -1,10 +1,18 @@
 statesOptions = defineDropdownStatesOptions(data.results[0].members)
 createDropdownStates(statesOptions)
 
-function createDropdownStates(statesOptions) {
+/* function createDropdownStates(statesOptions) {
   statesOptions.forEach(function (state) {
     $("#dd-states").append(
       '<a class="dropdown-item" id="' + state + '" onclick="getDD(this.id)">' + state + '</a>'
+    )
+  })
+} */
+
+function createDropdownStates(statesOptions) {
+  statesOptions.forEach(function (state) {
+    $("#dd-states").append(
+      '<option value="' + state + '" >' + state + '</option>'
     )
   })
 }
@@ -16,9 +24,9 @@ function defineDropdownStatesOptions(members) {
   }
 
   states.sort();
-  
+
   var statesOptions = [];
-  
+
   for (var i = 0; i < states.length; i++) {
     if (states[i] != states[i + 1]) {
       statesOptions.push(states[i]);
@@ -79,6 +87,9 @@ function getCB() {
     finalData = [];
   }
 
+  let stateSelected = document.getElementById("dd-states").value;
+  finalData = getDD(finalData, stateSelected);
+
   createTableHouse(finalData);
 
   if (finalData.length == 0) {
@@ -91,7 +102,7 @@ function getCB() {
   return finalData;
 }
 
-function getDD(id) {
+/* function getDD(id) {
   var dataToFilter = getCB();
   if (id == "ALL") {
     var finalData = dataToFilter
@@ -100,4 +111,23 @@ function getDD(id) {
     var finalData = dataToFilter.filter(member => member.state == id)
   }
   createTableHouse(finalData);
+  console.log(id)
+} */
+
+
+
+document.getElementById("dd-states").addEventListener("change", () => {
+  let stateSelected = document.getElementById("dd-states").value;
+  var dataToFilter = getCB();
+  getDD(dataToFilter, stateSelected)
+});
+
+function getDD(members ,state) {
+  if ((state) == "ALL") {
+    var finalData = members
+  }
+  else {
+    var finalData = members.filter(member => member.state == state)
+  }
+  return finalData;
 }

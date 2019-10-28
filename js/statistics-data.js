@@ -39,7 +39,9 @@ function loyaltyTableNumbers() {
   );
 }
 
-// Loyal
+// Loyalty
+
+// Statistics Displayed in Tables (Least Loyal)
 
 function loyaltyTableLL(members) {
   members.forEach(function (member) {
@@ -55,6 +57,19 @@ function loyaltyTableLL(members) {
       + '</tr>')
   })
 }
+
+function hasMiddleName(member) {
+  var middleName;
+  if (member.middle_name != null) {
+    middleName = member.middle_name;
+  }
+  else {
+    middleName = '';
+  }
+  return middleName
+}
+
+// Least Often Vote with Party Calculations
 
 function findMinPercentage(members) {
   var lowestPercentage = members[0].votes_with_party_pct;
@@ -96,6 +111,8 @@ function findLeastLoyal(members) {
   return leastLoyalsArray;
 }
 
+// Statistics Displayed in Tables (Most Loyal)
+
 function loyaltyTableML(members) {
   members.forEach(function (member) {
     $("#t-ML").append('<tr>'
@@ -110,6 +127,8 @@ function loyaltyTableML(members) {
       + '</tr>')
   })
 }
+
+// Most Often Vote with Party Calculations
 
 function findMaxPercentage(members) {
   var highestPercentage = members[0].votes_with_party_pct;
@@ -154,6 +173,8 @@ function findMostLoyal(members) {
 
 // Enganged
 
+// Statistics Displayed in Tables (Least Enganged)
+
 function loyaltyTableLE(members) {
   members.forEach(function (member) {
     $("#t-LE").append('<tr>'
@@ -168,6 +189,8 @@ function loyaltyTableLE(members) {
       + '</tr>')
   })
 }
+
+// Least Enganged
 
 function findMaxPercentageEnganged(members) {
   var highestPercentage = members[0].missed_votes_pct;
@@ -210,6 +233,7 @@ function findLeastEnganged(members) {
   return leastLoyalsArray;
 }
 
+// Statistics Displayed in Tables (Most Enganged)
 
 function loyaltyTableME(members) {
   members.forEach(function (member) {
@@ -225,6 +249,8 @@ function loyaltyTableME(members) {
       + '</tr>')
   })
 }
+
+// most Enganged
 
 function findMinPercentageEnganged(members) {
   var lowestPercentage = members[0].missed_votes_pct;
@@ -267,7 +293,7 @@ function findMostEnganged(members) {
   return leastLoyalsArray;
 }
 
-// Statistics
+// Object
 
 var democratsArray = data.results[0].members.filter(member => member.party == "D");
 var republicansArray = data.results[0].members.filter(member => member.party == "R");
@@ -278,21 +304,11 @@ var statistics = {
   "republicansNumber": republicansArray.length || 0,
   "independentsNumber": independentsArray.length || 0,
   "totalNumber": democratsArray.length + republicansArray.length + independentsArray.length,
-  "democratsVotesParty": votesWithParty(democratsArray),
-  "republicansVotesParty": votesWithParty(republicansArray),
-  "independentsVotesParty": votesWithParty(independentsArray),
+  "democratsVotesParty": votesWithParty(democratsArray) || 0,
+  "republicansVotesParty": votesWithParty(republicansArray) || 0,
+  "independentsVotesParty": votesWithParty(independentsArray) || 0,
   "totalVotesParty": votesWithParty(data.results[0].members),
 }
-
-// Tests
-
-/* console.log("democratsNumber: ", statistics.democratsNumber);
-console.log("republicansNumber: ", statistics.republicansNumber);
-console.log("independentsNumber: ", statistics.independentsNumber);
-console.log("totalNumber: ", statistics.totalNumber);
-console.log("democratsVotesParty: ", statistics.democratsVotesParty);
-console.log("republicansVotesParty: ", statistics.republicansVotesParty);
-console.log("independentsVotesParty: ", statistics.independentsVotesParty); */
 
 //
 

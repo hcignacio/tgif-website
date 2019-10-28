@@ -22,7 +22,7 @@
     <div class="container-fluid">
       <div class="row mt-2">
         <div class="px-4 col-md-12" style="display: flex">
-          <img src="./images/zoom.png" style="height: 2rem">
+          <img src="./images/zoom.png" class="logo">
           <h3>
             TGIF Logo
           </h3>
@@ -48,6 +48,22 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                       <a class="dropdown-item active" href="#">House</a>
                       <a class="dropdown-item" href="senate-data.html">Senate</a>
+                    </div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink"
+                      data-toggle="dropdown">Attendance</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <a class="dropdown-item" href="house-attendance-statistics.html">House</a>
+                      <a class="dropdown-item" href="senate-attendance-statistics.html">Senate</a>
+                    </div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink"
+                      data-toggle="dropdown">Party Loyalty</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <a class="dropdown-item" href="house-loyalty-statistics.html">House</a>
+                      <a class="dropdown-item" href="senate-loyalty-statistics.html">Senate</a>
                     </div>
                   </li>
                 </ul>
@@ -119,7 +135,10 @@
               <h6 class="mb-0 pr-3">
                 filter by state:
               </h6>
-              <div class="dropdown">
+              <select id="dd-states" class="from-control">
+                <option value="ALL">ALL</option>
+              </select>
+              <!-- <div class="dropdown">
                 <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Select a state
@@ -128,7 +147,7 @@
                   <a class="dropdown-item" id="ALL" onclick="getDD(this.id)">ALL</a>
                   <div class="dropdown-divider"></div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
 
