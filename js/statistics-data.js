@@ -1,3 +1,156 @@
+var url = 'https://api.propublica.org/congress/v1/113/senate/members.json';
+var init = {
+  headers: { 'X-API-Key': '7N4UW2yp17PDDNXVaEn7IK9c9NqAPMLu9snmfpyQ' },
+  mode: 'cors',
+};
+
+$(function () {
+  fetchJson(url, init);
+})
+
+function fetchJson(url, init) {
+  return fetch(url, init).then(function (response) {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error(response.statusText);
+  }).then(function (data) {
+
+    var data = data.results[0].members;
+    app.fullData = data;
+
+    var democratsArray = data.filter(member => member.party == "D");
+    var republicansArray = data.filter(member => member.party == "R");
+    var independentsArray = data.filter(member => member.party == "I");
+
+    app.statistics.democratsNumber = democratsArray.length || 0;
+    app.statistics.republicansNumber = republicansArray.length || 0;
+    app.statistics.independentsNumber = independentsArray.length || 0;
+    app.statistics.totalNumber = democratsArray.length + republicansArray.length + independentsArray.length;
+    app.statistics.democratsVotesParty = votesWithParty(democratsArray).toFixed(2) || 0;
+    app.statistics.republicansVotesParty = votesWithParty(republicansArray).toFixed(2) || 0;
+    app.statistics.independentsVotesParty = votesWithParty(independentsArray).toFixed(2) || 0;
+    app.statistics.totalVotesParty = votesWithParty(data).toFixed(2);
+
+    app.findLeastLoyal(app.fullData);
+    app.findMostLoyal(app.fullData);
+
+    console.log(app.leastLoyals)
+    console.log(app.mostLoyals)
+
+    //app.loyaltyTableNumbers(app);
+
+    /* loyaltyTableNumbers();
+    var leastLoyal = findLeastLoyal(data.results[0].members);
+    loyaltyTableLL(leastLoyal);
+    var mostLoyal = findMostLoyal(data.results[0].members);
+    loyaltyTableML(mostLoyal);
+
+    var leastLoyal = findLeastEnganged(data.results[0].members);
+    loyaltyTableLE(leastLoyal);
+    var MostLoyal = findMostEnganged(data.results[0].members);
+    loyaltyTableME(MostLoyal); */
+
+  });
+}
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    fullData: [],
+    statistics: {
+      "democratsNumber": 0,
+      "republicansNumber": 0,
+      "independentsNumber": 0,
+      "totalNumber": 0,
+      "democratsVotesParty": 0,
+      "republicansVotesParty": 0,
+      "independentsVotesParty": 0,
+      "totalVotesParty": 0,
+    },
+    leastLoyals: [],
+    mostLoyals: [],
+  },
+  methods: {
+    findMinPercentage: function (members) {
+      var lowestPercentage = members[0].votes_with_party_pct;
+      for (var i = 0; i < members.length - 1; i++) {
+        if (members[i].votes_with_party_pct < members[i + 1].votes_with_party_pct) {
+          probablyTheLowest = members[i].votes_with_party_pct;
+        }
+        else {
+          probablyTheLowest = members[i + 1].votes_with_party_pct;
+        }
+        if (lowestPercentage > probablyTheLowest) {
+          lowestPercentage = probablyTheLowest;
+        }
+      }
+
+      return lowestPercentage
+    },
+    findLeastLoyal: function (members) {
+      var sortedMembers = members.sort((a, b) => (a.votes_with_party_pct > b.votes_with_party_pct) ? 1 : -1);
+      var filteredMembers;
+      var totalLength = members.length;
+      var lowerLength = 0;
+      var percentage = 0;
+      var leastLoyalsArray = [];
+      var lowestPercentage = this.findMinPercentage(sortedMembers);
+
+      sortedMembers.forEach(member => {
+        while (percentage < 0.1) {
+          if (member.votes_with_party_pct <= lowestPercentage) {
+            filteredMembers = sortedMembers.filter(member => member.votes_with_party_pct > lowestPercentage);
+            lowerLength += 1;
+            percentage = lowerLength / totalLength;
+            lowestPercentage = this.findMinPercentage(filteredMembers);
+          }
+        }
+      });
+      leastLoyalsArray = sortedMembers.slice(0, lowerLength);
+      this.leastLoyals = leastLoyalsArray;
+    },
+    findMaxPercentage: function (members) {
+      var highestPercentage = members[0].votes_with_party_pct;
+      for (var i = 0; i < members.length - 1; i++) {
+        if (members[i].votes_with_party_pct > members[i + 1].votes_with_party_pct) {
+          probablyTheHighest = members[i].votes_with_party_pct;
+        }
+        else {
+          probablyTheHighest = members[i + 1].votes_with_party_pct;
+        }
+        if (highestPercentage < probablyTheHighest) {
+          highestPercentage = probablyTheHighest;
+        }
+      }
+      return highestPercentage
+    },
+    findMostLoyal: function (members) {
+      var sortedMembers = members.sort((a, b) => (a.votes_with_party_pct > b.votes_with_party_pct) ? -1 : 1);
+      var filteredMembers;
+      var totalLength = members.length;
+      var higherLength = 0;
+      var percentage = 0;
+      var mostLoyalsArray = [];
+      var highestPercentage = this.findMaxPercentage(sortedMembers);
+
+      sortedMembers.forEach(member => {
+        while (percentage < 0.1) {
+          if (member.votes_with_party_pct >= highestPercentage) {
+            filteredMembers = sortedMembers.filter(member => member.votes_with_party_pct < highestPercentage);
+            totalLength = filteredMembers.length;
+            higherLength += 1;
+            percentage = higherLength / totalLength;
+            highestPercentage = this.findMaxPercentage(filteredMembers);
+          }
+        }
+      });
+      mostLoyalsArray = sortedMembers.slice(0, higherLength);
+      this.mostLoyals = mostLoyalsArray;
+    }
+  }
+});
+
 // Functions
 
 function votesWithParty(members) {
@@ -11,6 +164,7 @@ function votesWithParty(members) {
 
   return average;
 }
+
 
 function loyaltyTableNumbers() {
   $("#democratsNumber").append(
@@ -71,7 +225,7 @@ function hasMiddleName(member) {
 
 // Least Often Vote with Party Calculations
 
-function findMinPercentage(members) {
+/* function findMinPercentage(members) {
   var lowestPercentage = members[0].votes_with_party_pct;
   for (var i = 0; i < members.length - 1; i++) {
     if (members[i].votes_with_party_pct < members[i + 1].votes_with_party_pct) {
@@ -109,7 +263,7 @@ function findLeastLoyal(members) {
   });
   leastLoyalsArray = sortedMembers.slice(0, lowerLength);
   return leastLoyalsArray;
-}
+} */
 
 // Statistics Displayed in Tables (Most Loyal)
 
@@ -130,7 +284,7 @@ function loyaltyTableML(members) {
 
 // Most Often Vote with Party Calculations
 
-function findMaxPercentage(members) {
+/* function findMaxPercentage(members) {
   var highestPercentage = members[0].votes_with_party_pct;
   for (var i = 0; i < members.length - 1; i++) {
     if (members[i].votes_with_party_pct > members[i + 1].votes_with_party_pct) {
@@ -169,7 +323,7 @@ function findMostLoyal(members) {
   });
   leastLoyalsArray = sortedMembers.slice(0, higherLength);
   return leastLoyalsArray;
-}
+} */
 
 // Enganged
 
@@ -295,11 +449,11 @@ function findMostEnganged(members) {
 
 // Object
 
-var democratsArray = data.results[0].members.filter(member => member.party == "D");
+/* var democratsArray = data.results[0].members.filter(member => member.party == "D");
 var republicansArray = data.results[0].members.filter(member => member.party == "R");
-var independentsArray = data.results[0].members.filter(member => member.party == "I");
+var independentsArray = data.results[0].members.filter(member => member.party == "I"); */
 
-var statistics = {
+/* var statistics = {
   "democratsNumber": democratsArray.length || 0,
   "republicansNumber": republicansArray.length || 0,
   "independentsNumber": independentsArray.length || 0,
@@ -308,11 +462,11 @@ var statistics = {
   "republicansVotesParty": votesWithParty(republicansArray) || 0,
   "independentsVotesParty": votesWithParty(independentsArray) || 0,
   "totalVotesParty": votesWithParty(data.results[0].members),
-}
+} */
 
 //
 
-loyaltyTableNumbers();
+/* loyaltyTableNumbers();
 var leastLoyal = findLeastLoyal(data.results[0].members);
 loyaltyTableLL(leastLoyal);
 var mostLoyal = findMostLoyal(data.results[0].members);
@@ -321,4 +475,4 @@ loyaltyTableML(mostLoyal);
 var leastLoyal = findLeastEnganged(data.results[0].members);
 loyaltyTableLE(leastLoyal);
 var MostLoyal = findMostEnganged(data.results[0].members);
-loyaltyTableME(MostLoyal);
+loyaltyTableME(MostLoyal); */

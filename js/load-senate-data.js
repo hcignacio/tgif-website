@@ -1,4 +1,4 @@
-var url = 'https://api.propublica.org/congress/v1/113/house/members.json';
+var url = 'https://api.propublica.org/congress/v1/113/senate/members.json';
 var init = {
   headers: { 'X-API-Key': '7N4UW2yp17PDDNXVaEn7IK9c9NqAPMLu9snmfpyQ' },
   mode: 'cors',
@@ -18,42 +18,19 @@ function fetchJson(url, init) {
 
     console.log(data.results[0].members);
 
+    app.senatorsFull = data.results[0].members;
     app.senators = data.results[0].members;
-
-    statesOptions = defineDropdownStatesOptions(data.results[0].members);
-    createDropdownStates(statesOptions);
-    getCB(data.results[0].members);
-
-    document.getElementById("dd-states").addEventListener("change", () => {
-      let stateSelected = document.getElementById("dd-states").value;
-      var dataToFilter = getCB(data.results[0].members);
-      getDD(dataToFilter, stateSelected)
-    });
-    document.getElementById("D").addEventListener("change", () => {
-      let stateSelected = document.getElementById("dd-states").value;
-      var dataToFilter = getCB(data.results[0].members);
-      getDD(dataToFilter, stateSelected)
-    });
-    document.getElementById("R").addEventListener("change", () => {
-      let stateSelected = document.getElementById("dd-states").value;
-      var dataToFilter = getCB(data.results[0].members);
-      getDD(dataToFilter, stateSelected)
-    });
-    document.getElementById("I").addEventListener("change", () => {
-      let stateSelected = document.getElementById("dd-states").value;
-      var dataToFilter = getCB(data.results[0].members);
-      getDD(dataToFilter, stateSelected)
-    });
   });
 }
 
 var app = new Vue({
   el: '#app',
   data: {
+    senatorsFull: [],
     senators: [],
   },
   methods: {
-    filterByParty: function () {
+    filterBy: function () {
 
       checkedBoxes = [];
       if (document.getElementById("D").checked) {
@@ -65,21 +42,60 @@ var app = new Vue({
       if (document.getElementById("I").checked) {
         checkedBoxes.push('I')
       }
-
       console.log(checkedBoxes);
 
-      filteredMembers = this.senators.filter(member => checkedBoxes.includes(member.party));
+      let stateSelected = document.getElementById("dd-states").value;
+      console.log(stateSelected);
 
+      this.senators = this.senatorsFull;
+
+      if (stateSelected === "ALL") {
+        filteredMembers = this.senators.filter(member => checkedBoxes.includes(member.party));
+      }
+      else {
+        filteredMembers = this.senators.filter(member => checkedBoxes.includes(member.party) && member.state == stateSelected);
+      }
       console.log(filteredMembers);
 
-      return filteredMembers
+      this.senators = filteredMembers;
     }
   }
 });
 
-/* statesOptions = defineDropdownStatesOptions(data.results[0].members)
-createDropdownStates(statesOptions)*/
 
+document.getElementById("dd-states").addEventListener("change", () => {
+  app.filterBy()
+});
+
+/* statesOptions = defineDropdownStatesOptions(data.results[0].members);
+        createDropdownStates(statesOptions); */
+/*
+getCB(data.results[0].members);
+
+document.getElementById("dd-states").addEventListener("change", () => {
+  let stateSelected = document.getElementById("dd-states").value;
+  var dataToFilter = getCB(data.results[0].members);
+  getDD(dataToFilter, stateSelected)
+});
+document.getElementById("D").addEventListener("change", () => {
+  let stateSelected = document.getElementById("dd-states").value;
+  var dataToFilter = getCB(data.results[0].members);
+  getDD(dataToFilter, stateSelected)
+});
+document.getElementById("R").addEventListener("change", () => {
+  let stateSelected = document.getElementById("dd-states").value;
+  var dataToFilter = getCB(data.results[0].members);
+  getDD(dataToFilter, stateSelected)
+});
+document.getElementById("I").addEventListener("change", () => {
+  let stateSelected = document.getElementById("dd-states").value;
+  var dataToFilter = getCB(data.results[0].members);
+  getDD(dataToFilter, stateSelected)
+}); */
+
+/* statesOptions = defineDropdownStatesOptions(data.results[0].members)
+createDropdownStates(statesOptions)
+ */
 /* function createDropdownStates(statesOptions) {
   statesOptions.forEach(function (state) {
     $("#dd-states").append(
@@ -88,7 +104,7 @@ createDropdownStates(statesOptions)*/
   })
 } */
 
-function createDropdownStates(statesOptions) {
+/* function createDropdownStates(statesOptions) {
   statesOptions.forEach(function (state) {
     $("#dd-states").append(
       '<option value="' + state + '" >' + state + '</option>'
@@ -112,8 +128,9 @@ function defineDropdownStatesOptions(members) {
     }
   }
   return statesOptions;
-}
+} */
 
+/*
 function createTableSenate(members) {
   $("#t-data").empty();
   members.forEach(function (member) {
@@ -143,10 +160,10 @@ function hasMiddleName(member) {
     middleName = '';
   }
   return middleName
-}
+} */
 
 
-function getCB(members) {
+/* function getCB(members) {
   checkedBoxes = [];
   if (document.getElementById("D").checked) {
     checkedBoxes.push('D')
@@ -171,16 +188,15 @@ function getCB(members) {
 
   createTableSenate(finalData);
 
-  /*   if (finalData.length == 0) {
+  if (finalData.length == 0) {
       $(".table").hide();
     }
     else {
       $(".table").fadeIn();
     }
-   */
 
   return finalData;
-}
+} */
 
 /* function getDD(id) {
   var dataToFilter = getCB();
@@ -199,7 +215,8 @@ function getCB(members) {
   getDD(dataToFilter, stateSelected)
 }); */
 
-function getDD(members, state) {
+
+/* function getDD(members, state) {
   if ((state) == "ALL") {
     var finalData = members
   }
@@ -207,4 +224,4 @@ function getDD(members, state) {
     var finalData = members.filter(member => member.state == state)
   }
   return finalData;
-}
+} */
