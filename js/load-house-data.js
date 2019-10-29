@@ -1,5 +1,51 @@
-statesOptions = defineDropdownStatesOptions(data.results[0].members)
-createDropdownStates(statesOptions)
+var url = 'https://api.propublica.org/congress/v1/113/house/members.json';
+var init = {
+  headers: { 'X-API-Key': '7N4UW2yp17PDDNXVaEn7IK9c9NqAPMLu9snmfpyQ' },
+  mode: 'cors',
+};
+
+$(function () {
+  fetchJson(url, init);
+})
+
+function fetchJson(url, init) {
+  return fetch(url, init).then(function (response) {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error(response.statusText);
+  }).then(function (data) {
+    
+    console.log(data.results[0].members);
+    statesOptions = defineDropdownStatesOptions(data.results[0].members);
+    createDropdownStates(statesOptions);
+    getCB(data.results[0].members);
+
+    document.getElementById("dd-states").addEventListener("change", () => {
+      let stateSelected = document.getElementById("dd-states").value;
+      var dataToFilter = getCB(data.results[0].members);
+      getDD(dataToFilter, stateSelected)
+    });
+    document.getElementById("cb-d").addEventListener("change", () => {
+      let stateSelected = document.getElementById("dd-states").value;
+      var dataToFilter = getCB(data.results[0].members);
+      getDD(dataToFilter, stateSelected)
+    });
+    document.getElementById("cb-r").addEventListener("change", () => {
+      let stateSelected = document.getElementById("dd-states").value;
+      var dataToFilter = getCB(data.results[0].members);
+      getDD(dataToFilter, stateSelected)
+    });
+    document.getElementById("cb-i").addEventListener("change", () => {
+      let stateSelected = document.getElementById("dd-states").value;
+      var dataToFilter = getCB(data.results[0].members);
+      getDD(dataToFilter, stateSelected)
+    });
+  });
+}
+
+// statesOptions = defineDropdownStatesOptions(data.results[0].members)
+// createDropdownStates(statesOptions)
 
 /* function createDropdownStates(statesOptions) {
   statesOptions.forEach(function (state) {
@@ -67,7 +113,7 @@ function hasMiddleName(member) {
 }
 
 
-function getCB() {
+function getCB(members) {
   checkedBoxes = [];
   if (document.getElementById("cb-d").checked) {
     checkedBoxes.push('D')
@@ -79,7 +125,7 @@ function getCB() {
     checkedBoxes.push('I')
   }
 
-  var dataToFilter = data.results[0].members;
+  var dataToFilter = members;
 
   var finalData = dataToFilter.filter(member => checkedBoxes.includes(member.party))
 
@@ -114,15 +160,13 @@ function getCB() {
   console.log(id)
 } */
 
-
-
-document.getElementById("dd-states").addEventListener("change", () => {
+/* document.getElementById("dd-states").addEventListener("change", () => {
   let stateSelected = document.getElementById("dd-states").value;
   var dataToFilter = getCB();
   getDD(dataToFilter, stateSelected)
-});
+}); */
 
-function getDD(members ,state) {
+function getDD(members, state) {
   if ((state) == "ALL") {
     var finalData = members
   }

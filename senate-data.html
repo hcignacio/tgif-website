@@ -2,20 +2,17 @@
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Senate Page</title>
 
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Senate Page</title>
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Cabin&display=swap" rel="stylesheet">
+</head>
 
-    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Cabin&display=swap" rel="stylesheet">
-  </head>
-
-<body onload="getCB()">
-
+<body>
   <div id="main">
     <div class="container-fluid">
       <div class="row mt-2">
@@ -101,74 +98,98 @@
         </div>
       </div>
 
-      <div class="container-fluid mt-2">
 
-        <div class="row options py-2">
 
-          <div class="col-lg-12" style="padding-top: 0.8rem;">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <div class="input-group-text py-0 bg-white border-0">
-                  <h6 class="mb-0 pr-3">
-                    filter by party:
-                  </h6>
-                  <span class="mr-3">
-                    <input type="checkbox" id="cb-d" onclick="getCB()" checked>Democrat</span>
-                  <span class="mr-3">
-                    <input type="checkbox" id="cb-r" onclick="getCB()" checked>Republican</span>
-                  <span class="mr-3">
-                    <input type="checkbox" id="cb-i" onclick="getCB()" checked>Independent</span>
+
+      <!--       <div class="container" id="app">
+        <table>
+          <thead>
+
+          </thead>
+          <tbody>
+            <tr v-for="(value, key) in senators">
+              <td>{{value.first_name}} {{value.middle_name}} {{value.last_name}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+ -->
+
+
+      <div class="container-fluid" id="app">
+        <div class="container-fluid mt-2">
+
+          <div class="row options py-2">
+
+            <div class="col-lg-12" style="padding-top: 0.8rem;">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text py-0 bg-white border-0">
+                    <h6 class="mb-0 pr-3">
+                      filter by party:
+                    </h6>
+                    <span class="mr-3">
+                      <input type="checkbox" id="D" v-on:click="filterByParty()" checked>Democrat</span>
+                    <span class="mr-3">
+                      <input type="checkbox" id="R" v-on:click="filterByParty()" checked>Republican</span>
+                    <span class="mr-3">
+                      <input type="checkbox" id="I" v-on:click="filterByParty()" checked>Independent</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="col-lg-12">
-            <div class="input-group-text bg-white border-0 pt-3">
-              <h6 class="mb-0 pr-3">
-                filter by state:
-              </h6>
-              <select id="dd-states" class="from-control">
-                <option value="ALL">ALL</option>
-              </select>
+            <div class="col-lg-12">
+              <div class="input-group-text bg-white border-0 pt-3">
+                <h6 class="mb-0 pr-3">
+                  filter by state:
+                </h6>
+                <select id="dd-states" class="from-control">
+                  <option value="ALL">ALL</option>
+                </select>
+              </div>
             </div>
+
+
           </div>
-
-
         </div>
-      </div>
 
+        <div class="row">
 
-      <div class="row">
-
-        <div class="col-lg-12 col-xs-12 mx-0">
-          <table class="table my-2">
-            <thead>
-              <tr>
-                <th class="table-index">
-                </th>
-                <th class="table-full-name">
-                  Senator
-                </th>
-                <th class="table-party">
-                  Party Affiliation
-                </th>
-                <th class="table-state">
-                  State
-                </th>
-                <th class="table-seniority">
-                  Years in Office
-                </th>
-                <th class="table-votes">
-                  Votes
-                </th>
+          <div class="col-lg-12 col-xs-12 mx-0">
+            <table class="table my-2">
+              <thead>
+                <tr>
+                  <th class="table-index">
+                  </th>
+                  <th class="table-full-name">
+                    Senator
+                  </th>
+                  <th class="table-party">
+                    Party Affiliation
+                  </th>
+                  <th class="table-state">
+                    State
+                  </th>
+                  <th class="table-seniority">
+                    Years in Office
+                  </th>
+                  <th class="table-votes">
+                    Votes
+                  </th>
+                </tr>
+              </thead>
+              <tr v-for="(member, key) in filterByParty()">
+                <td>{{key+1}}</td>
+                <td>{{member.first_name}} {{member.middle_name}} {{member.last_name}}</td>
+                <td>{{member.party}}</td>
+                <td>{{member.state}}</td>
+                <td>{{member.seniority}} years</td>
+                <td>{{member.votes_with_party_pct}} %</td>
               </tr>
-            </thead>
-            <tbody id="t-data">
-            </tbody>
-          </table>
+            </table>
+          </div>
         </div>
-
       </div>
     </div>
 
@@ -182,7 +203,7 @@
 <script src="vendor/jquery/jquery-3.4.1.min.js"></script>
 <script src="vendor/popper/popper.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<script src="js/pro-congress-113-senate.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="js/load-senate-data.js"></script>
 
 </html>

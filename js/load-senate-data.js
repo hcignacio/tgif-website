@@ -1,5 +1,92 @@
-statesOptions = defineDropdownStatesOptions(data.results[0].members)
-createDropdownStates(statesOptions)
+var url = 'https://api.propublica.org/congress/v1/113/house/members.json';
+var init = {
+  headers: { 'X-API-Key': '7N4UW2yp17PDDNXVaEn7IK9c9NqAPMLu9snmfpyQ' },
+  mode: 'cors',
+};
+
+$(function () {
+  fetchJson(url, init);
+})
+
+function fetchJson(url, init) {
+  return fetch(url, init).then(function (response) {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error(response.statusText);
+  }).then(function (data) {
+
+    console.log(data.results[0].members);
+
+    app.senators = data.results[0].members;
+
+    statesOptions = defineDropdownStatesOptions(data.results[0].members);
+    createDropdownStates(statesOptions);
+    getCB(data.results[0].members);
+
+    document.getElementById("dd-states").addEventListener("change", () => {
+      let stateSelected = document.getElementById("dd-states").value;
+      var dataToFilter = getCB(data.results[0].members);
+      getDD(dataToFilter, stateSelected)
+    });
+    document.getElementById("D").addEventListener("change", () => {
+      let stateSelected = document.getElementById("dd-states").value;
+      var dataToFilter = getCB(data.results[0].members);
+      getDD(dataToFilter, stateSelected)
+    });
+    document.getElementById("R").addEventListener("change", () => {
+      let stateSelected = document.getElementById("dd-states").value;
+      var dataToFilter = getCB(data.results[0].members);
+      getDD(dataToFilter, stateSelected)
+    });
+    document.getElementById("I").addEventListener("change", () => {
+      let stateSelected = document.getElementById("dd-states").value;
+      var dataToFilter = getCB(data.results[0].members);
+      getDD(dataToFilter, stateSelected)
+    });
+  });
+}
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    senators: [],
+  },
+  methods: {
+    filterByParty: function () {
+
+      checkedBoxes = [];
+      if (document.getElementById("D").checked) {
+        checkedBoxes.push('D')
+      }
+      if (document.getElementById("R").checked) {
+        checkedBoxes.push('R')
+      }
+      if (document.getElementById("I").checked) {
+        checkedBoxes.push('I')
+      }
+
+      console.log(checkedBoxes);
+
+      filteredMembers = this.senators.filter(member => checkedBoxes.includes(member.party));
+
+      console.log(filteredMembers);
+
+      return filteredMembers
+    }
+  }
+});
+
+/* statesOptions = defineDropdownStatesOptions(data.results[0].members)
+createDropdownStates(statesOptions)*/
+
+/* function createDropdownStates(statesOptions) {
+  statesOptions.forEach(function (state) {
+    $("#dd-states").append(
+      '<a class="dropdown-item" id="' + state + '" onclick="getDD(this.id)">' + state + '</a>'
+    )
+  })
+} */
 
 function createDropdownStates(statesOptions) {
   statesOptions.forEach(function (state) {
@@ -59,19 +146,19 @@ function hasMiddleName(member) {
 }
 
 
-function getCB() {
+function getCB(members) {
   checkedBoxes = [];
-  if (document.getElementById("cb-d").checked) {
+  if (document.getElementById("D").checked) {
     checkedBoxes.push('D')
   }
-  if (document.getElementById("cb-r").checked) {
+  if (document.getElementById("R").checked) {
     checkedBoxes.push('R')
   }
-  if (document.getElementById("cb-i").checked) {
+  if (document.getElementById("I").checked) {
     checkedBoxes.push('I')
   }
 
-  var dataToFilter = data.results[0].members;
+  var dataToFilter = members;
 
   var finalData = dataToFilter.filter(member => checkedBoxes.includes(member.party))
 
@@ -84,12 +171,13 @@ function getCB() {
 
   createTableSenate(finalData);
 
-  if (finalData.length == 0) {
-    $(".table").hide();
-  }
-  else {
-    $(".table").fadeIn();
-  }
+  /*   if (finalData.length == 0) {
+      $(".table").hide();
+    }
+    else {
+      $(".table").fadeIn();
+    }
+   */
 
   return finalData;
 }
@@ -105,11 +193,11 @@ function getCB() {
   createTableSenate(finalData);
 } */
 
-document.getElementById("dd-states").addEventListener("change", () => {
+/* document.getElementById("dd-states").addEventListener("change", () => {
   let stateSelected = document.getElementById("dd-states").value;
   var dataToFilter = getCB();
   getDD(dataToFilter, stateSelected)
-});
+}); */
 
 function getDD(members, state) {
   if ((state) == "ALL") {
