@@ -1,8 +1,11 @@
-var url = 'https://api.propublica.org/congress/v1/113/senate/members.json';
+var url;
 var init = {
   headers: { 'X-API-Key': '7N4UW2yp17PDDNXVaEn7IK9c9NqAPMLu9snmfpyQ' },
   mode: 'cors',
 };
+
+url = (window.location.pathname.includes("senate")) ?
+  'https://api.propublica.org/congress/v1/113/senate/members.json' : 'https://api.propublica.org/congress/v1/113/house/members.json';
 
 $(function () {
   fetchJson(url, init);
@@ -27,30 +30,15 @@ function fetchJson(url, init) {
     app.statistics.republicansNumber = republicansArray.length || 0;
     app.statistics.independentsNumber = independentsArray.length || 0;
     app.statistics.totalNumber = democratsArray.length + republicansArray.length + independentsArray.length;
-    app.statistics.democratsVotesParty = votesWithParty(democratsArray).toFixed(2) || 0;
-    app.statistics.republicansVotesParty = votesWithParty(republicansArray).toFixed(2) || 0;
-    app.statistics.independentsVotesParty = votesWithParty(independentsArray).toFixed(2) || 0;
-    app.statistics.totalVotesParty = votesWithParty(data).toFixed(2);
+    app.statistics.democratsVotesParty = (votesWithParty(democratsArray) || 0).toFixed(2);
+    app.statistics.republicansVotesParty = (votesWithParty(republicansArray) || 0).toFixed(2);
+    app.statistics.independentsVotesParty = (votesWithParty(independentsArray) || 0).toFixed(2);
+    app.statistics.totalVotesParty = (votesWithParty(data) || 0).toFixed(2);
 
     app.findLeastLoyal(app.fullData);
     app.findMostLoyal(app.fullData);
-
-    console.log(app.leastLoyals)
-    console.log(app.mostLoyals)
-
-    //app.loyaltyTableNumbers(app);
-
-    /* loyaltyTableNumbers();
-    var leastLoyal = findLeastLoyal(data.results[0].members);
-    loyaltyTableLL(leastLoyal);
-    var mostLoyal = findMostLoyal(data.results[0].members);
-    loyaltyTableML(mostLoyal);
-
-    var leastLoyal = findLeastEnganged(data.results[0].members);
-    loyaltyTableLE(leastLoyal);
-    var MostLoyal = findMostEnganged(data.results[0].members);
-    loyaltyTableME(MostLoyal); */
-
+    app.findLeastEnganged(app.fullData);
+    app.findMostEnganged(app.fullData);
   });
 }
 
@@ -70,8 +58,11 @@ var app = new Vue({
     },
     leastLoyals: [],
     mostLoyals: [],
+    leastEngaged: [],
+    mostEngaged: [],
   },
   methods: {
+    // LeastLoyal
     findMinPercentage: function (members) {
       var lowestPercentage = members[0].votes_with_party_pct;
       for (var i = 0; i < members.length - 1; i++) {
@@ -96,7 +87,6 @@ var app = new Vue({
       var percentage = 0;
       var leastLoyalsArray = [];
       var lowestPercentage = this.findMinPercentage(sortedMembers);
-
       sortedMembers.forEach(member => {
         while (percentage < 0.1) {
           if (member.votes_with_party_pct <= lowestPercentage) {
@@ -110,6 +100,7 @@ var app = new Vue({
       leastLoyalsArray = sortedMembers.slice(0, lowerLength);
       this.leastLoyals = leastLoyalsArray;
     },
+    // MostLoyal
     findMaxPercentage: function (members) {
       var highestPercentage = members[0].votes_with_party_pct;
       for (var i = 0; i < members.length - 1; i++) {
@@ -133,7 +124,6 @@ var app = new Vue({
       var percentage = 0;
       var mostLoyalsArray = [];
       var highestPercentage = this.findMaxPercentage(sortedMembers);
-
       sortedMembers.forEach(member => {
         while (percentage < 0.1) {
           if (member.votes_with_party_pct >= highestPercentage) {
@@ -147,11 +137,89 @@ var app = new Vue({
       });
       mostLoyalsArray = sortedMembers.slice(0, higherLength);
       this.mostLoyals = mostLoyalsArray;
+    },
+    // LeastEngaged
+    findMaxPercentageEnganged: function (members) {
+      var highestPercentage = members[0].missed_votes_pct;
+      for (var i = 0; i < members.length - 1; i++) {
+        if (members[i].missed_votes_pct > members[i + 1].missed_votes_pct) {
+          probablyTheHighest = members[i].missed_votes_pct;
+        }
+        else {
+          probablyTheHighest = members[i + 1].missed_votes_pct;
+        }
+        if (highestPercentage < probablyTheHighest) {
+          highestPercentage = probablyTheHighest;
+        }
+      }
+
+      return highestPercentage
+    },
+    findLeastEnganged: function (members) {
+      var sortedMembers = members.sort((a, b) => (a.missed_votes_pct > b.missed_votes_pct) ? -1 : 1);
+      var filteredMembers;
+      var totalLength = members.length;
+      var lowerLength = 0;
+      var percentage = 0;
+      var leastEngagedArray = [];
+      var highestPercentage = this.findMaxPercentageEnganged(sortedMembers);
+      sortedMembers.forEach(member => {
+        while (percentage < 0.1) {
+          if (member.missed_votes_pct >= highestPercentage) {
+            filteredMembers = sortedMembers.filter(member => member.missed_votes_pct < highestPercentage);
+
+            lowerLength += 1;
+            percentage = lowerLength / totalLength;
+            highestPercentage = this.findMaxPercentageEnganged(filteredMembers);
+          }
+        }
+      });
+      leastEngagedArray = sortedMembers.slice(0, lowerLength);
+      this.leastEngaged = leastEngagedArray;
+    },
+    // MostEngaged
+    findMinPercentageEnganged: function (members) {
+      var lowestPercentage = members[0].missed_votes_pct;
+      for (var i = 0; i < members.length - 1; i++) {
+        if (members[i].missed_votes_pct < members[i + 1].missed_votes_pct) {
+          probablyTheLowest = members[i].missed_votes_pct;
+        }
+        else {
+          probablyTheLowest = members[i + 1].missed_votes_pct;
+        }
+        if (lowestPercentage > probablyTheLowest) {
+          lowestPercentage = probablyTheLowest;
+        }
+      }
+
+      return lowestPercentage
+    },
+    findMostEnganged: function (members) {
+      var sortedMembers = members.sort((a, b) => (a.missed_votes_pct > b.missed_votes_pct) ? 1 : -1);
+      var filteredMembers;
+      var totalLength = members.length;
+      var lowerLength = 0;
+      var percentage = 0;
+      var mostEngagedArray = [];
+      var highestPercentage = this.findMinPercentageEnganged(sortedMembers);
+
+
+      sortedMembers.forEach(member => {
+        while (percentage < 0.1) {
+          if (member.missed_votes_pct <= highestPercentage) {
+            filteredMembers = sortedMembers.filter(member => member.missed_votes_pct > highestPercentage);
+            lowerLength += 1;
+            percentage = lowerLength / totalLength;
+            highestPercentage = this.findMinPercentageEnganged(filteredMembers);
+          }
+        }
+      });
+      mostEngagedArray = sortedMembers.slice(0, lowerLength);
+      this.mostEngaged = mostEngagedArray;
     }
   }
 });
 
-// Functions
 
 function votesWithParty(members) {
   var total = 0;
@@ -164,6 +232,9 @@ function votesWithParty(members) {
 
   return average;
 }
+
+/*
+// Functions
 
 
 function loyaltyTableNumbers() {
@@ -225,7 +296,7 @@ function hasMiddleName(member) {
 
 // Least Often Vote with Party Calculations
 
-/* function findMinPercentage(members) {
+function findMinPercentage(members) {
   var lowestPercentage = members[0].votes_with_party_pct;
   for (var i = 0; i < members.length - 1; i++) {
     if (members[i].votes_with_party_pct < members[i + 1].votes_with_party_pct) {
@@ -263,7 +334,7 @@ function findLeastLoyal(members) {
   });
   leastLoyalsArray = sortedMembers.slice(0, lowerLength);
   return leastLoyalsArray;
-} */
+}
 
 // Statistics Displayed in Tables (Most Loyal)
 
@@ -284,7 +355,7 @@ function loyaltyTableML(members) {
 
 // Most Often Vote with Party Calculations
 
-/* function findMaxPercentage(members) {
+function findMaxPercentage(members) {
   var highestPercentage = members[0].votes_with_party_pct;
   for (var i = 0; i < members.length - 1; i++) {
     if (members[i].votes_with_party_pct > members[i + 1].votes_with_party_pct) {
@@ -323,7 +394,7 @@ function findMostLoyal(members) {
   });
   leastLoyalsArray = sortedMembers.slice(0, higherLength);
   return leastLoyalsArray;
-} */
+}
 
 // Enganged
 
@@ -449,11 +520,11 @@ function findMostEnganged(members) {
 
 // Object
 
-/* var democratsArray = data.results[0].members.filter(member => member.party == "D");
+var democratsArray = data.results[0].members.filter(member => member.party == "D");
 var republicansArray = data.results[0].members.filter(member => member.party == "R");
-var independentsArray = data.results[0].members.filter(member => member.party == "I"); */
+var independentsArray = data.results[0].members.filter(member => member.party == "I");
 
-/* var statistics = {
+var statistics = {
   "democratsNumber": democratsArray.length || 0,
   "republicansNumber": republicansArray.length || 0,
   "independentsNumber": independentsArray.length || 0,
@@ -462,11 +533,11 @@ var independentsArray = data.results[0].members.filter(member => member.party ==
   "republicansVotesParty": votesWithParty(republicansArray) || 0,
   "independentsVotesParty": votesWithParty(independentsArray) || 0,
   "totalVotesParty": votesWithParty(data.results[0].members),
-} */
+}
 
 //
 
-/* loyaltyTableNumbers();
+loyaltyTableNumbers();
 var leastLoyal = findLeastLoyal(data.results[0].members);
 loyaltyTableLL(leastLoyal);
 var mostLoyal = findMostLoyal(data.results[0].members);
@@ -475,4 +546,5 @@ loyaltyTableML(mostLoyal);
 var leastLoyal = findLeastEnganged(data.results[0].members);
 loyaltyTableLE(leastLoyal);
 var MostLoyal = findMostEnganged(data.results[0].members);
-loyaltyTableME(MostLoyal); */
+loyaltyTableME(MostLoyal);
+*/

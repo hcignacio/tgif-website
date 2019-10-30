@@ -9,7 +9,6 @@
 
   <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/style.css">
-  <link href="https://fonts.googleapis.com/css?family=Cabin&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -75,25 +74,25 @@
   </div>
 
   <div class="container-fluid">
-    <div class="row mt-4">
-      <div class="col-lg-6">
-        <div class="jumbotron mb-0 pb-4 px-5 bg-black border party-loyalty">
-          <h2>
-            Party Loyalty
-          </h2>
-          <p class="text-justify">
-            Those who consider themselves to be strong partisans, strong Democrats and strong Republicans
-            respectively,
-            tend to be the most faithful in voting for their party's nominee for office and legislation that
-            backs
-            their
-            party's agenda.
-          </p>
+
+    <div class="container-fluid" id="app">
+      <div class="row mt-4">
+        <div class="col-lg-6">
+          <div class="jumbotron mb-0 pb-4 px-5 bg-black border party-loyalty">
+            <h2>
+              Party Loyalty
+            </h2>
+            <p class="text-justify">
+              Those who consider themselves to be strong partisans, strong Democrats and strong Republicans
+              respectively,
+              tend to be the most faithful in voting for their party's nominee for office and legislation that
+              backs
+              their
+              party's agenda.
+            </p>
+          </div>
         </div>
-      </div>
 
-
-      <div class="container-fluid" id="app">
         <div class="col-lg-6 col-sm-12 mt-lg-0 mt-sm-5">
           <h2>House at a glance</h2>
           <table class="table">
@@ -107,62 +106,88 @@
             <tbody>
               <tr>
                 <td>Republican</td>
-                <td id="republicansNumber"></td>
-                <td id="republicansVotesParty"></td>
+                <td>
+                  {{statistics.republicansNumber}}
+                </td>
+                <td>
+                  {{statistics.republicansVotesParty}}
+                </td>
               </tr>
               <tr>
                 <td>Democrat</td>
-                <td id="democratsNumber"></td>
-                <td id="democratsVotesParty"></td>
+                <td>
+                  {{statistics.democratsNumber}}
+                </td>
+                <td>
+                  {{statistics.democratsVotesParty}}
+                </td>
               </tr>
               <tr>
                 <td>Independent</td>
-                <td id="independentsNumber"></td>
-                <td id="independentsVotesParty"></td>
+                <td>
+                  {{statistics.independentsNumber}}
+                </td>
+                <td>
+                  {{statistics.independentsVotesParty}}
+                </td>
               </tr>
               <tr>
                 <td>Total</td>
-                <td id="totalNumber"></td>
-                <td id="totalVotesParty"></td>
+                <td>
+                  {{statistics.totalNumber}}
+                </td>
+                <td>
+                  {{statistics.totalVotesParty}}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
 
-    <hr class="border border-black mt-4 mb-5">
+      <hr class="border border-black mt-4 mb-5">
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-lg-6 col-sm-12">
-          <h2>Least Loyal (Bottom 10% of Party)</h2>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Number Party Votes</th>
-                <th>% Party Votes</th>
-              </tr>
-            </thead>
-            <tbody id="t-LL">
-            </tbody>
-          </table>
-        </div>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-6 col-sm-12">
+            <h2>Least Loyal (Bottom 10%)</h2>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Number Party Votes</th>
+                  <th>% Party Votes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="member in leastLoyals">
+                  <td>{{member.first_name}} {{member.middle_name}} {{member.last_name}}</td>
+                  <td>{{member.total_votes}}</td>
+                  <td>{{member.votes_with_party_pct}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-        <div class="col-lg-6 col-sm-12 mt-lg-0 mt-sm-5">
-          <h2>Most Loyal (Top 10% of Party)</h2>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Number Party Votes</th>
-                <th>% Party Votes</th>
-              </tr>
-            </thead>
-            <tbody id="t-ML">
-            </tbody>
-          </table>
+          <div class="col-lg-6 col-sm-12 mt-lg-0 mt-sm-5">
+            <h2>Most Loyal (Top 10%)</h2>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Number Party Votes</th>
+                  <th>% Party Votes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="member in mostLoyals">
+                  <td>{{member.first_name}} {{member.middle_name}} {{member.last_name}}</td>
+                  <td>{{member.total_votes}}</td>
+                  <td>{{member.votes_with_party_pct}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
