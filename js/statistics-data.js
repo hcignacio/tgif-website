@@ -30,15 +30,22 @@ function fetchJson(url, init) {
     app.statistics.republicansNumber = republicansArray.length || 0;
     app.statistics.independentsNumber = independentsArray.length || 0;
     app.statistics.totalNumber = democratsArray.length + republicansArray.length + independentsArray.length;
-    app.statistics.democratsVotesParty = (votesWithParty(democratsArray) || 0).toFixed(2);
-    app.statistics.republicansVotesParty = (votesWithParty(republicansArray) || 0).toFixed(2);
-    app.statistics.independentsVotesParty = (votesWithParty(independentsArray) || 0).toFixed(2);
-    app.statistics.totalVotesParty = (votesWithParty(data) || 0).toFixed(2);
+    app.statistics.democratsVotesParty = (app.votesWithParty(democratsArray) || 0).toFixed(2);
+    app.statistics.republicansVotesParty = (app.votesWithParty(republicansArray) || 0).toFixed(2);
+    app.statistics.independentsVotesParty = (app.votesWithParty(independentsArray) || 0).toFixed(2);
+    app.statistics.totalVotesParty = (app.votesWithParty(data) || 0).toFixed(2);
 
+    /*
     app.findLeastLoyal(app.fullData);
     app.findMostLoyal(app.fullData);
     app.findLeastEnganged(app.fullData);
     app.findMostEnganged(app.fullData);
+    */
+
+    app.statisticsFunction(app.fullData, "loyals", "least");
+    app.statisticsFunction(app.fullData, "loyals", "most");
+    app.statisticsFunction(app.fullData, "engaged", "least");
+    app.statisticsFunction(app.fullData, "engaged", "most");
   });
 }
 
@@ -62,176 +69,72 @@ var app = new Vue({
     mostEngaged: [],
   },
   methods: {
-    // LeastLoyal
-    findMinPercentage: function (members) {
-      var lowestPercentage = members[0].votes_with_party_pct;
-      for (var i = 0; i < members.length - 1; i++) {
-        if (members[i].votes_with_party_pct < members[i + 1].votes_with_party_pct) {
-          probablyTheLowest = members[i].votes_with_party_pct;
+    votesWithParty: function (members) {
+      var total = 0;
+      var average;
+      members.forEach(member => {
+        var partial = member.votes_with_party_pct || 0;
+        total += partial;
+      });
+      average = total / members.length;
+
+      return average;
+    },
+    statisticsFunction: function (members, loyOrEng, leastOrMost) {
+      let tenPercent = members.length * 0.1;
+      let finalMembers = [];
+
+      if (loyOrEng === "loyals") {
+        if (leastOrMost === "least") {
+          let sorted = members.sort((a, b) => a.votes_with_party_pct - b.votes_with_party_pct);
+          for (var i = 0; i < tenPercent; i++) {
+            finalMembers.push(sorted[i]);
+          }
+          while (sorted[i].votes_with_party_pct === sorted[i + 1].votes_with_party_pct) {
+            finalMembers.push(sorted[i]);
+            i++;
+          }
+          this.leastLoyals = finalMembers;
         }
-        else {
-          probablyTheLowest = members[i + 1].votes_with_party_pct;
-        }
-        if (lowestPercentage > probablyTheLowest) {
-          lowestPercentage = probablyTheLowest;
+        else if (leastOrMost === "most") {
+          let sorted = members.sort((a, b) => b.votes_with_party_pct - a.votes_with_party_pct);
+          for (var i = 0; i < tenPercent; i++) {
+            finalMembers.push(sorted[i]);
+          }
+          while (sorted[i].votes_with_party_pct === sorted[i + 1].votes_with_party_pct) {
+            finalMembers.push(sorted[i]);
+            i++;
+          }
+          this.mostLoyals = finalMembers;
         }
       }
-
-      return lowestPercentage
-    },
-    findLeastLoyal: function (members) {
-      var sortedMembers = members.sort((a, b) => (a.votes_with_party_pct > b.votes_with_party_pct) ? 1 : -1);
-      var filteredMembers;
-      var totalLength = members.length;
-      var lowerLength = 0;
-      var percentage = 0;
-      var leastLoyalsArray = [];
-      var lowestPercentage = this.findMinPercentage(sortedMembers);
-      sortedMembers.forEach(member => {
-        while (percentage < 0.1) {
-          if (member.votes_with_party_pct <= lowestPercentage) {
-            filteredMembers = sortedMembers.filter(member => member.votes_with_party_pct > lowestPercentage);
-            lowerLength += 1;
-            percentage = lowerLength / totalLength;
-            lowestPercentage = this.findMinPercentage(filteredMembers);
+      else if (loyOrEng === "engaged") {
+        if (leastOrMost === "least") {
+          let sorted = members.sort((a, b) => b.missed_votes_pct - a.missed_votes_pct);
+          for (var i = 0; i < tenPercent; i++) {
+            finalMembers.push(sorted[i]);
           }
+          while (sorted[i].missed_votes_pct === sorted[i + 1].missed_votes_pct) {
+            finalMembers.push(sorted[i]);
+            i++;
+          }
+          this.leastEngaged = finalMembers;
         }
-      });
-      leastLoyalsArray = sortedMembers.slice(0, lowerLength);
-      this.leastLoyals = leastLoyalsArray;
-    },
-    // MostLoyal
-    findMaxPercentage: function (members) {
-      var highestPercentage = members[0].votes_with_party_pct;
-      for (var i = 0; i < members.length - 1; i++) {
-        if (members[i].votes_with_party_pct > members[i + 1].votes_with_party_pct) {
-          probablyTheHighest = members[i].votes_with_party_pct;
-        }
-        else {
-          probablyTheHighest = members[i + 1].votes_with_party_pct;
-        }
-        if (highestPercentage < probablyTheHighest) {
-          highestPercentage = probablyTheHighest;
+        else if (leastOrMost === "most") {
+          let sorted = members.sort((a, b) => a.missed_votes_pct - b.missed_votes_pct);
+          for (var i = 0; i < tenPercent; i++) {
+            finalMembers.push(sorted[i]);
+          }
+          while (sorted[i].missed_votes_pct === sorted[i + 1].missed_votes_pct) {
+            finalMembers.push(sorted[i]);
+            i++;
+          }
+          this.mostEngaged = finalMembers;
         }
       }
-      return highestPercentage
-    },
-    findMostLoyal: function (members) {
-      var sortedMembers = members.sort((a, b) => (a.votes_with_party_pct > b.votes_with_party_pct) ? -1 : 1);
-      var filteredMembers;
-      var totalLength = members.length;
-      var higherLength = 0;
-      var percentage = 0;
-      var mostLoyalsArray = [];
-      var highestPercentage = this.findMaxPercentage(sortedMembers);
-      sortedMembers.forEach(member => {
-        while (percentage < 0.1) {
-          if (member.votes_with_party_pct >= highestPercentage) {
-            filteredMembers = sortedMembers.filter(member => member.votes_with_party_pct < highestPercentage);
-            totalLength = filteredMembers.length;
-            higherLength += 1;
-            percentage = higherLength / totalLength;
-            highestPercentage = this.findMaxPercentage(filteredMembers);
-          }
-        }
-      });
-      mostLoyalsArray = sortedMembers.slice(0, higherLength);
-      this.mostLoyals = mostLoyalsArray;
-    },
-    // LeastEngaged
-    findMaxPercentageEnganged: function (members) {
-      var highestPercentage = members[0].missed_votes_pct;
-      for (var i = 0; i < members.length - 1; i++) {
-        if (members[i].missed_votes_pct > members[i + 1].missed_votes_pct) {
-          probablyTheHighest = members[i].missed_votes_pct;
-        }
-        else {
-          probablyTheHighest = members[i + 1].missed_votes_pct;
-        }
-        if (highestPercentage < probablyTheHighest) {
-          highestPercentage = probablyTheHighest;
-        }
-      }
-
-      return highestPercentage
-    },
-    findLeastEnganged: function (members) {
-      var sortedMembers = members.sort((a, b) => (a.missed_votes_pct > b.missed_votes_pct) ? -1 : 1);
-      var filteredMembers;
-      var totalLength = members.length;
-      var lowerLength = 0;
-      var percentage = 0;
-      var leastEngagedArray = [];
-      var highestPercentage = this.findMaxPercentageEnganged(sortedMembers);
-      sortedMembers.forEach(member => {
-        while (percentage < 0.1) {
-          if (member.missed_votes_pct >= highestPercentage) {
-            filteredMembers = sortedMembers.filter(member => member.missed_votes_pct < highestPercentage);
-
-            lowerLength += 1;
-            percentage = lowerLength / totalLength;
-            highestPercentage = this.findMaxPercentageEnganged(filteredMembers);
-          }
-        }
-      });
-      leastEngagedArray = sortedMembers.slice(0, lowerLength);
-      this.leastEngaged = leastEngagedArray;
-    },
-    // MostEngaged
-    findMinPercentageEnganged: function (members) {
-      var lowestPercentage = members[0].missed_votes_pct;
-      for (var i = 0; i < members.length - 1; i++) {
-        if (members[i].missed_votes_pct < members[i + 1].missed_votes_pct) {
-          probablyTheLowest = members[i].missed_votes_pct;
-        }
-        else {
-          probablyTheLowest = members[i + 1].missed_votes_pct;
-        }
-        if (lowestPercentage > probablyTheLowest) {
-          lowestPercentage = probablyTheLowest;
-        }
-      }
-
-      return lowestPercentage
-    },
-    findMostEnganged: function (members) {
-      var sortedMembers = members.sort((a, b) => (a.missed_votes_pct > b.missed_votes_pct) ? 1 : -1);
-      var filteredMembers;
-      var totalLength = members.length;
-      var lowerLength = 0;
-      var percentage = 0;
-      var mostEngagedArray = [];
-      var highestPercentage = this.findMinPercentageEnganged(sortedMembers);
-
-
-      sortedMembers.forEach(member => {
-        while (percentage < 0.1) {
-          if (member.missed_votes_pct <= highestPercentage) {
-            filteredMembers = sortedMembers.filter(member => member.missed_votes_pct > highestPercentage);
-            lowerLength += 1;
-            percentage = lowerLength / totalLength;
-            highestPercentage = this.findMinPercentageEnganged(filteredMembers);
-          }
-        }
-      });
-      mostEngagedArray = sortedMembers.slice(0, lowerLength);
-      this.mostEngaged = mostEngagedArray;
     }
   }
 });
-
-
-function votesWithParty(members) {
-  var total = 0;
-  var average;
-  members.forEach(member => {
-    var partial = member.votes_with_party_pct || 0;
-    total += partial;
-  });
-  average = total / members.length;
-
-  return average;
-}
 
 /*
 // Functions
