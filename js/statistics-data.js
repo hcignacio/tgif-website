@@ -14,34 +14,37 @@ $(function () {
 
 function fetchJson(url, init) {
   return fetch(url, init)
-  .then(function (response) {
-    if (response.ok) {
-      return response.json();
-    }
-    throw new Error(response.statusText);
-  }).then(function (data) {
+    .then(function (response) {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response.statusText);
+    }).then(function (data) {
 
-    var data = data.results[0].members;
-    app.fullData = data;
+      var data = data.results[0].members;
+      app.fullData = data;
 
-    var democratsArray = data.filter(member => member.party == "D");
-    var republicansArray = data.filter(member => member.party == "R");
-    var independentsArray = data.filter(member => member.party == "I");
+      var democratsArray = data.filter(member => member.party == "D");
+      var republicansArray = data.filter(member => member.party == "R");
+      var independentsArray = data.filter(member => member.party == "I");
 
-    app.statistics.democratsNumber = democratsArray.length || 0;
-    app.statistics.republicansNumber = republicansArray.length || 0;
-    app.statistics.independentsNumber = independentsArray.length || 0;
-    app.statistics.totalNumber = democratsArray.length + republicansArray.length + independentsArray.length;
-    app.statistics.democratsVotesParty = (app.votesWithParty(democratsArray) || 0).toFixed(2);
-    app.statistics.republicansVotesParty = (app.votesWithParty(republicansArray) || 0).toFixed(2);
-    app.statistics.independentsVotesParty = (app.votesWithParty(independentsArray) || 0).toFixed(2);
-    app.statistics.totalVotesParty = (app.votesWithParty(data) || 0).toFixed(2);
+      app.statistics.democratsNumber = democratsArray.length || 0;
+      app.statistics.republicansNumber = republicansArray.length || 0;
+      app.statistics.independentsNumber = independentsArray.length || 0;
+      app.statistics.totalNumber = democratsArray.length + republicansArray.length + independentsArray.length;
+      app.statistics.democratsVotesParty = (app.votesWithParty(democratsArray) || 0).toFixed(2);
+      app.statistics.republicansVotesParty = (app.votesWithParty(republicansArray) || 0).toFixed(2);
+      app.statistics.independentsVotesParty = (app.votesWithParty(independentsArray) || 0).toFixed(2);
+      app.statistics.totalVotesParty = (app.votesWithParty(data) || 0).toFixed(2);
 
-    app.statisticsFunction(app.fullData, "loyals", "least");
-    app.statisticsFunction(app.fullData, "loyals", "most");
-    app.statisticsFunction(app.fullData, "engaged", "least");
-    app.statisticsFunction(app.fullData, "engaged", "most");
-  });
+      app.statisticsFunction(app.fullData, "loyals", "least");
+      app.statisticsFunction(app.fullData, "loyals", "most");
+      app.statisticsFunction(app.fullData, "engaged", "least");
+      app.statisticsFunction(app.fullData, "engaged", "most");
+
+      app.votesWithPartyArrayFunction(app.leastLoyals, "least");
+      app.votesWithPartyArrayFunction(app.mostLoyals, "most");
+    });
 }
 
 var app = new Vue({
@@ -62,8 +65,24 @@ var app = new Vue({
     mostLoyals: [],
     leastEngaged: [],
     mostEngaged: [],
+    votesWithPartyArrayLL: [],
+    votesWithPartyArrayML: []
   },
   methods: {
+    votesWithPartyArrayFunction: function (members, leastOrMost) {
+      var votesWithPartyArrayAux = [];
+      for (let i = 0; i < members.length; i++) {
+        votesWithPartyArrayAux.push(
+          Math.round(members[i].total_votes * members[i].votes_with_party_pct / 100));
+      }
+      if (leastOrMost === "least") {
+        this.votesWithPartyArrayLL = votesWithPartyArrayAux;
+        return this.votesWithPartyArrayLL;
+      }
+      else {
+        this.votesWithPartyArrayML = votesWithPartyArrayAux;
+      }
+    },
     votesWithParty: function (members) {
       var total = 0;
       var average;
@@ -84,7 +103,7 @@ var app = new Vue({
           for (var i = 0; i < tenPercent; i++) {
             finalMembers.push(sorted[i]);
           }
-          while (sorted[i-1].votes_with_party_pct === sorted[i].votes_with_party_pct) {
+          while (sorted[i - 1].votes_with_party_pct === sorted[i].votes_with_party_pct) {
             finalMembers.push(sorted[i]);
             i++;
           }
@@ -121,7 +140,7 @@ var app = new Vue({
           }
           while (sorted[i - 1].missed_votes_pct === sorted[i].missed_votes_pct) {
             finalMembers.push(sorted[i]);
-            ++i;
+            i++;
           }
           this.mostEngaged = finalMembers;
         }

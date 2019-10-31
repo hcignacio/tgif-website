@@ -160,9 +160,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="member in leastLoyals">
+                <tr v-for="(member,key) in leastLoyals">
                   <td>{{member.first_name}} {{member.middle_name}} {{member.last_name}}</td>
-                  <td>{{member.total_votes}}</td>
+                  <td>{{votesWithPartyArrayLL[key]}}</td>
                   <td>{{member.votes_with_party_pct}} %</td>
                 </tr>
               </tbody>
@@ -180,9 +180,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="member in mostLoyals">
+                <tr v-for="(member, key) in mostLoyals">
                   <td>{{member.first_name}} {{member.middle_name}} {{member.last_name}}</td>
-                  <td>{{member.total_votes}}</td>
+                  <td>{{votesWithPartyArrayML[key]}}</td>
                   <td>{{member.votes_with_party_pct}} %</td>
                 </tr>
               </tbody>
