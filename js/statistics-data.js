@@ -5,14 +5,16 @@ var init = {
 };
 
 url = (window.location.pathname.includes("senate")) ?
-  'https://api.propublica.org/congress/v1/113/senate/members.json' : 'https://api.propublica.org/congress/v1/113/house/members.json';
+  'https://api.propublica.org/congress/v1/113/senate/members.json'
+  : 'https://api.propublica.org/congress/v1/113/house/members.json';
 
 $(function () {
   fetchJson(url, init);
 })
 
 function fetchJson(url, init) {
-  return fetch(url, init).then(function (response) {
+  return fetch(url, init)
+  .then(function (response) {
     if (response.ok) {
       return response.json();
     }
@@ -34,13 +36,6 @@ function fetchJson(url, init) {
     app.statistics.republicansVotesParty = (app.votesWithParty(republicansArray) || 0).toFixed(2);
     app.statistics.independentsVotesParty = (app.votesWithParty(independentsArray) || 0).toFixed(2);
     app.statistics.totalVotesParty = (app.votesWithParty(data) || 0).toFixed(2);
-
-    /*
-    app.findLeastLoyal(app.fullData);
-    app.findMostLoyal(app.fullData);
-    app.findLeastEnganged(app.fullData);
-    app.findMostEnganged(app.fullData);
-    */
 
     app.statisticsFunction(app.fullData, "loyals", "least");
     app.statisticsFunction(app.fullData, "loyals", "most");
@@ -77,20 +72,19 @@ var app = new Vue({
         total += partial;
       });
       average = total / members.length;
-
       return average;
     },
     statisticsFunction: function (members, loyOrEng, leastOrMost) {
       let tenPercent = members.length * 0.1;
+      tenPercent = Math.round(tenPercent);
       let finalMembers = [];
-
       if (loyOrEng === "loyals") {
         if (leastOrMost === "least") {
           let sorted = members.sort((a, b) => a.votes_with_party_pct - b.votes_with_party_pct);
           for (var i = 0; i < tenPercent; i++) {
             finalMembers.push(sorted[i]);
           }
-          while (sorted[i].votes_with_party_pct === sorted[i + 1].votes_with_party_pct) {
+          while (sorted[i-1].votes_with_party_pct === sorted[i].votes_with_party_pct) {
             finalMembers.push(sorted[i]);
             i++;
           }
@@ -101,7 +95,7 @@ var app = new Vue({
           for (var i = 0; i < tenPercent; i++) {
             finalMembers.push(sorted[i]);
           }
-          while (sorted[i].votes_with_party_pct === sorted[i + 1].votes_with_party_pct) {
+          while (sorted[i - 1].votes_with_party_pct === sorted[i].votes_with_party_pct) {
             finalMembers.push(sorted[i]);
             i++;
           }
@@ -114,7 +108,7 @@ var app = new Vue({
           for (var i = 0; i < tenPercent; i++) {
             finalMembers.push(sorted[i]);
           }
-          while (sorted[i].missed_votes_pct === sorted[i + 1].missed_votes_pct) {
+          while (sorted[i - 1].missed_votes_pct === sorted[i].missed_votes_pct) {
             finalMembers.push(sorted[i]);
             i++;
           }
@@ -125,9 +119,9 @@ var app = new Vue({
           for (var i = 0; i < tenPercent; i++) {
             finalMembers.push(sorted[i]);
           }
-          while (sorted[i].missed_votes_pct === sorted[i + 1].missed_votes_pct) {
+          while (sorted[i - 1].missed_votes_pct === sorted[i].missed_votes_pct) {
             finalMembers.push(sorted[i]);
-            i++;
+            ++i;
           }
           this.mostEngaged = finalMembers;
         }

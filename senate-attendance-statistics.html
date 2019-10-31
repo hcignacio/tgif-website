@@ -129,7 +129,7 @@
               <tr>
                 <th>Party</th>
                 <th>Number of Reps</th>
-                <th>% Voted with Party</th>
+                <th>Voted with Party</th>
               </tr>
             </thead>
             <tbody>
@@ -139,7 +139,7 @@
                   {{statistics.republicansNumber}}
                 </td>
                 <td>
-                  {{statistics.republicansVotesParty}}
+                  {{statistics.republicansVotesParty}} %
                 </td>
               </tr>
               <tr>
@@ -148,7 +148,7 @@
                   {{statistics.democratsNumber}}
                 </td>
                 <td>
-                  {{statistics.democratsVotesParty}}
+                  {{statistics.democratsVotesParty}} %
                 </td>
               </tr>
               <tr>
@@ -157,7 +157,7 @@
                   {{statistics.independentsNumber}}
                 </td>
                 <td>
-                  {{statistics.independentsVotesParty}}
+                  {{statistics.independentsVotesParty}} %
                 </td>
               </tr>
               <tr>
@@ -166,7 +166,7 @@
                   {{statistics.totalNumber}}
                 </td>
                 <td>
-                  {{statistics.totalVotesParty}}
+                  {{statistics.totalVotesParty}} %
                 </td>
               </tr>
             </tbody>
@@ -185,14 +185,14 @@
                 <tr>
                   <th>Name</th>
                   <th>Number of Missed Votes</th>
-                  <th>% Missed</th>
+                  <th>Missed</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="member in leastEngaged">
                   <td>{{member.first_name}} {{member.middle_name}} {{member.last_name}}</td>
                   <td>{{member.missed_votes}}</td>
-                  <td>{{member.missed_votes_pct}}</td>
+                  <td>{{member.missed_votes_pct}} %</td>
                 </tr>
               </tbody>
             </table>
@@ -205,14 +205,14 @@
                 <tr>
                   <th>Name</th>
                   <th>Number of Missed Votes</th>
-                  <th>% Missed</th>
+                  <th>Missed</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="member in mostEngaged">
                   <td>{{member.first_name}} {{member.middle_name}} {{member.last_name}}</td>
                   <td>{{member.missed_votes}}</td>
-                  <td>{{member.missed_votes_pct}}</td>
+                  <td>{{member.missed_votes_pct}} %</td>
                 </tr>
               </tbody>
             </table>
